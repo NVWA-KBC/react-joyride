@@ -269,6 +269,11 @@ export type Step = Simplify<
      */
     target: string | HTMLElement;
     /**
+     * If the target is in a shadow root, you can pass the shadow root here.
+     * It can be a CSS selector or an HTMLElement ref.
+     */
+    shadowRootTarget?: string | HTMLElement;
+    /**
      * The tooltip's title.
      */
     title?: ReactNode;

@@ -40,7 +40,7 @@ export function getMergedStep(props: Props, currentStep?: Step): StepMerged {
 
   const mergedStyles = getStyles(props, mergedStep);
   const scrollParent = hasCustomScrollParent(
-    getElement(mergedStep.target),
+    getElement(mergedStep.target, mergedStep.shadowRootTarget),
     mergedStep.disableScrollParentFix,
   );
   const floaterProps = deepmerge.all([

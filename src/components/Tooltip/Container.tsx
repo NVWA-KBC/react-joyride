@@ -58,7 +58,10 @@ function JoyrideTooltipContainer(props: TooltipRenderProps) {
             {title}
           </h1>
         )}
-        <div style={styles.tooltipContent}>{content}</div>
+        <div
+          dangerouslySetInnerHTML={{ __html: content as TrustedHTML }}
+          style={styles.tooltipContent}
+        />
       </div>
       {!hideFooter && (
         <div style={styles.tooltipFooter}>

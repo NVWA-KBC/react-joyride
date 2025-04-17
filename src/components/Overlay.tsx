@@ -43,8 +43,14 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
   };
 
   componentDidMount() {
-    const { debug, disableScrolling, disableScrollParentFix = false, target } = this.props;
-    const element = getElement(target);
+    const {
+      debug,
+      disableScrolling,
+      disableScrollParentFix = false,
+      shadowRootTarget,
+      target,
+    } = this.props;
+    const element = getElement(target, shadowRootTarget);
 
     this.scrollParent = getScrollParent(element ?? document.body, disableScrollParentFix, true);
     this.isActive = true;
@@ -63,11 +69,12 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
   }
 
   componentDidUpdate(previousProps: OverlayProps) {
-    const { disableScrollParentFix, lifecycle, spotlightClicks, target } = this.props;
+    const { disableScrollParentFix, lifecycle, shadowRootTarget, spotlightClicks, target } =
+      this.props;
     const { changed } = treeChanges(previousProps, this.props);
 
     if (changed('target') || changed('disableScrollParentFix')) {
-      const element = getElement(target);
+      const element = getElement(target, shadowRootTarget);
 
       this.scrollParent = getScrollParent(element ?? document.body, disableScrollParentFix, true);
     }
@@ -141,12 +148,13 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
     const { showSpotlight } = this.state;
     const {
       disableScrollParentFix = false,
+      shadowRootTarget,
       spotlightClicks,
       spotlightPadding = 0,
       styles,
       target,
     } = this.props;
-    const element = getElement(target);
+    const element = getElement(target, shadowRootTarget);
     const elementRect = getClientRect(element);
     const isFixedTarget = hasPosition(element);
     const top = getElementPosition(element, spotlightPadding, disableScrollParentFix);
@@ -180,8 +188,8 @@ export default class JoyrideOverlay extends React.Component<OverlayProps, State>
   };
 
   handleScroll = () => {
-    const { target } = this.props;
-    const element = getElement(target);
+    const { shadowRootTarget, target } = this.props;
+    const element = getElement(target, shadowRootTarget);
 
     if (this.scrollParent !== document) {
       const { isScrolling } = this.state;

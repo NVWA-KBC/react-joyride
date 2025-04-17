@@ -81,7 +81,7 @@ export default class JoyrideStep extends React.Component<StepProps> {
     }
 
     if (hasStoreChanged) {
-      const element = getElement(step.target);
+      const element = getElement(step.target, step.shadowRootTarget);
       const elementExists = !!element;
       const hasRenderedTarget = elementExists && isElementVisible(element);
 
@@ -223,7 +223,7 @@ export default class JoyrideStep extends React.Component<StepProps> {
 
   render() {
     const { continuous, debug, index, nonce, shouldScroll, size, step } = this.props;
-    const target = getElement(step.target);
+    const target = getElement(step.target, step.shadowRootTarget);
 
     if (!validateStep(step) || !is.domElement(target)) {
       return null;
@@ -239,7 +239,7 @@ export default class JoyrideStep extends React.Component<StepProps> {
           id={`react-joyride-step-${index}`}
           open={this.open}
           placement={step.placement}
-          target={step.target}
+          target={target}
         >
           <Beacon
             beaconComponent={step.beaconComponent}
