@@ -1,8 +1,31 @@
 import scroll from 'scroll';
-import scrollParent from 'scrollparent';
 
 export function canUseDOM() {
   return !!(typeof window !== 'undefined' && window.document?.createElement);
+}
+
+function isScrolling(node: Element) {
+  const overflow = getComputedStyle(node, null).getPropertyValue('overflow');
+
+  return overflow.includes('scroll') || overflow.includes('auto');
+}
+
+function scrollParent(node: Element): HTMLElement | undefined {
+  if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
+    return undefined;
+  }
+
+  let current = node.parentNode;
+
+  while (current !== null && current.parentNode) {
+    if (isScrolling(current as HTMLElement)) {
+      return current as HTMLElement;
+    }
+
+    current = current.parentNode;
+  }
+
+  return (document.scrollingElement || document.documentElement) as HTMLElement;
 }
 
 /**
