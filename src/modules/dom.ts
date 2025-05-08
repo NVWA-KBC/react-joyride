@@ -96,7 +96,6 @@ export function getElement(
       return rootElement.querySelector(element);
     } catch (error: any) {
       if (process.env.NODE_ENV !== 'production') {
-        // eslint-disable-next-line no-console
         console.error(error);
       }
 

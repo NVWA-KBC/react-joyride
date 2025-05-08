@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { canUseDOM } from '~/modules/dom';
-import { isReact16 } from '~/modules/helpers';
+import {canUseDOM} from '~/modules/dom';
+import {isReact16} from '~/modules/helpers';
 
 interface Props {
   children: React.ReactElement;
@@ -47,6 +47,7 @@ export default class JoyridePortal extends React.Component<Props> {
     if (!isReact16) {
       // eslint-disable-next-line react/no-deprecated
       ReactDOM.unmountComponentAtNode(this.node);
+      ReactDOM.unmount();
     }
 
     if (this.node.parentNode === document.body) {
