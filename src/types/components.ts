@@ -1,10 +1,10 @@
-import { ElementType, MouseEventHandler, ReactNode, RefCallback } from 'react';
-import { Props as FloaterProps } from 'react-floater';
-import { PartialDeep, SetRequired, Simplify } from 'type-fest';
+import {ElementType, MouseEventHandler, ReactNode, RefCallback} from 'react';
+import {Props as FloaterProps} from 'react-floater';
+import {PartialDeep, SetRequired, Simplify} from 'type-fest';
 
-import type { StoreInstance } from '~/modules/store';
+import type {StoreInstance} from '~/modules/store';
 
-import { Actions, Events, Lifecycle, Locale, Origin, Placement, Status, Styles } from './common';
+import {Actions, Events, Lifecycle, Locale, Origin, Placement, Status, Styles} from './common';
 
 export type BaseProps = {
   /**
@@ -263,6 +263,11 @@ export type Step = Simplify<
      * The placement of the beacon. It will use the `placement` if nothing is passed
      */
     placementBeacon?: Placement;
+    /**
+     * If the target is in a shadow root, you can pass the shadow root here.
+     * It can be a CSS selector or an HTMLElement ref.
+     */
+    shadowRootTarget?: string | HTMLElement;
     /**
      * The target for the step.
      * It can be a CSS selector or an HTMLElement ref.

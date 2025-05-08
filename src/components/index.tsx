@@ -96,7 +96,7 @@ class Joyride extends React.Component<Props, State> {
 
     const stepsChanged = !isEqual(previousSteps, steps);
     const stepIndexChanged = is.number(stepIndex) && changedProps('stepIndex');
-    const target = getElement(step.target);
+    const target = getElement(step.target, step.shadowRootTarget);
 
     if (stepsChanged) {
       if (validateSteps(steps, debug)) {
@@ -266,7 +266,7 @@ class Joyride extends React.Component<Props, State> {
     } = this.props;
     const step = getMergedStep(this.props, steps[index]);
 
-    const target = getElement(step.target);
+    const target = getElement(step.target, step.shadowRootTarget);
     const shouldScrollToStep = shouldScroll({
       isFirstStep: index === 0,
       lifecycle,

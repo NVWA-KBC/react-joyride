@@ -1,8 +1,31 @@
 import scroll from 'scroll';
-import scrollParent from 'scrollparent';
 
 export function canUseDOM() {
   return !!(typeof window !== 'undefined' && window.document?.createElement);
+}
+
+function isScrolling(node: Element) {
+  const overflow = getComputedStyle(node, null).getPropertyValue('overflow');
+
+  return overflow.includes('scroll') || overflow.includes('auto');
+}
+
+function scrollParent(node: Element): HTMLElement | undefined {
+  if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
+    return undefined;
+  }
+
+  let current = node.parentNode;
+
+  while (current !== null && current.parentNode) {
+    if (isScrolling(current as HTMLElement)) {
+      return current as HTMLElement;
+    }
+
+    current = current.parentNode;
+  }
+
+  return (document.scrollingElement || document.documentElement) as HTMLElement;
 }
 
 /**
@@ -55,13 +78,24 @@ export function getDocumentHeight(median = false): number {
 /**
  * Find and return the target DOM element based on a step's 'target'.
  */
-export function getElement(element: string | HTMLElement): HTMLElement | null {
+export function getElement(
+  element: string | HTMLElement,
+  parentElement?: string | HTMLElement,
+): HTMLElement | null {
+  let rootElement: Document | ShadowRoot = document;
+
+  if (parentElement) {
+    rootElement =
+      typeof parentElement === 'string'
+        ? document.getElementById(parentElement)?.shadowRoot || document
+        : (parentElement as HTMLElement).shadowRoot || document;
+  }
+
   if (typeof element === 'string') {
     try {
-      return document.querySelector(element);
+      return rootElement.querySelector(element);
     } catch (error: any) {
       if (process.env.NODE_ENV !== 'production') {
-        // eslint-disable-next-line no-console
         console.error(error);
       }
 

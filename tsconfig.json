@@ -7,7 +7,9 @@
     "noEmit": true,
     "paths": {
       "~/*": ["src/*"]
-    }
+    },
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
   "include": ["src/**/*"]
 }
