@@ -5,12 +5,12 @@
   "author": "Gil Barbara <gilbarbara@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gilbarbara/react-joyride.git"
+    "url": "git+https://github.com/NVWA-KBC/react-joyride"
   },
   "bugs": {
-    "url": "https://github.com/gilbarbara/react-joyride/issues"
+    "url": "https://github.com/NVWA-KBC/react-joyride/issues"
   },
-  "homepage": "https://react-joyride.com/",
+  "homepage": "https://nvwa.nl/",
   "keywords": [
     "react",
     "react-component",
