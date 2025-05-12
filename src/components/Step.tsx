@@ -4,19 +4,18 @@ import { useMount, useUnmount } from '@gilbarbara/hooks';
 import is from 'is-lite';
 import useTreeChanges from 'tree-changes-hook';
 
+import { LIFECYCLE, PORTAL_ELEMENT_ID } from '~/literals';
 import { getElement } from '~/modules/dom';
 import { log } from '~/modules/helpers';
 import Scope from '~/modules/scope';
 import { validateStep } from '~/modules/step';
-
-import { LIFECYCLE, PORTAL_ELEMENT_ID } from '~/literals';
 
 import { StepProps } from '~/types';
 
 import Beacon from './Beacon';
 import Tooltip from './Tooltip/index';
 
-export default function JoyrideStep(props: StepProps) {
+export default function JoyrideStep(props: Readonly<StepProps>) {
   const {
     cleanupPoppers,
     continuous,
@@ -73,7 +72,7 @@ export default function JoyrideStep(props: StepProps) {
     tooltipRef.current = element;
   };
 
-  const target = getElement(step.target);
+  const target = getElement(step.target, step.shadowRootTarget);
 
   if (!validateStep(step) || !is.domElement(target)) {
     return null;
@@ -106,7 +105,7 @@ export default function JoyrideStep(props: StepProps) {
         open={lifecycle === LIFECYCLE.TOOLTIP}
         placement={step.placement}
         portalElement={`#${PORTAL_ELEMENT_ID}`}
-        target={step.target}
+        target={target}
       >
         <Beacon
           beaconComponent={step.beaconComponent}

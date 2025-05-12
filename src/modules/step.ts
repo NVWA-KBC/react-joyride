@@ -5,6 +5,7 @@ import is from 'is-lite';
 
 import { defaultFloaterProps, defaultLocale, defaultStep } from '~/defaults';
 import getStyles from '~/styles';
+
 import { Props, Step, StepMerged } from '~/types';
 
 import { getElement, hasCustomScrollParent } from './dom';
@@ -44,7 +45,7 @@ export function getMergedStep(props: Props, currentStep?: Step): StepMerged | nu
 
   const mergedStyles = getStyles(props, mergedStep);
   const scrollParent = hasCustomScrollParent(
-    getElement(mergedStep.target),
+    getElement(mergedStep.target, mergedStep.shadowRootTarget),
     mergedStep.disableScrollParentFix,
   );
   const floaterProps = deepmerge.all([

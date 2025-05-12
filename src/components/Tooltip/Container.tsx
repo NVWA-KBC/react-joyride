@@ -6,7 +6,7 @@ import { TooltipRenderProps } from '~/types';
 
 import CloseButton from './CloseButton';
 
-export default function JoyrideTooltipContainer(props: TooltipRenderProps) {
+export default function JoyrideTooltipContainer(props: Readonly<TooltipRenderProps>) {
   const { backProps, closeProps, index, isLastStep, primaryProps, skipProps, step, tooltipProps } =
     props;
   const { content, hideBackButton, hideCloseButton, hideFooter, showSkipButton, styles, title } =

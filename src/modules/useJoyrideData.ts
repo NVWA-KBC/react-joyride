@@ -1,4 +1,5 @@
 import { MutableRefObject, useCallback, useMemo, useRef } from 'react';
+import { PopperInstance } from 'react-floater';
 import isEqual from '@gilbarbara/deep-equal';
 import {
   useDeepCompareEffect,
@@ -11,6 +12,8 @@ import {
 import is from 'is-lite';
 import useTreeChanges from 'tree-changes-hook';
 
+import { defaultProps } from '~/defaults';
+import { ACTIONS, EVENTS, LIFECYCLE, STATUS } from '~/literals';
 import {
   getElement,
   getScrollParent,
@@ -21,11 +24,8 @@ import {
 } from '~/modules/dom';
 import { hideBeacon, log, mergeProps, shouldScroll } from '~/modules/helpers';
 import { getMergedStep, validateSteps } from '~/modules/step';
-import createStore from '~/modules/store';
+import createStore, { PopperData } from '~/modules/store';
 
-import { ACTIONS, EVENTS, LIFECYCLE, STATUS } from '~/literals';
-
-import { defaultProps } from '~/defaults';
 import { Actions, Props, State, Status } from '~/types';
 
 export default function useJoyrideData(
@@ -72,7 +72,7 @@ export default function useJoyrideData(
         return;
       }
 
-      const target = getElement(step.target);
+      const target = getElement(step.target, step.shadowRootTarget);
       const shouldScrollToStep = shouldScroll({
         isFirstStep: index === 0,
         lifecycle,
@@ -113,7 +113,7 @@ export default function useJoyrideData(
           const y = offset?.top?.y ?? 0;
           const flipped = !!placement && placement !== step.placement;
 
-          if (['top', 'right', 'left'].includes(placement) && !flipped && !hasCustomScroll) {
+          if (['left', 'right', 'top'].includes(placement) && !flipped && !hasCustomScroll) {
             scrollY = Math.floor(y - scrollOffset);
           } else {
             scrollY -= step.spotlightPadding;
@@ -126,7 +126,19 @@ export default function useJoyrideData(
           scrollTo(scrollY, { element: scrollParent as Element, duration: scrollDuration }).then(
             () => {
               setTimeout(() => {
-                store.current.getPopper('tooltip')?.update();
+                const popper = store.current.getPopper('tooltip');
+
+                if (!popper) {
+                  return;
+                }
+
+                if (Object.hasOwn(popper, 'update')) {
+                  popper?.update();
+                } else if (Object.hasOwn(popper, 'instance')) {
+                  (
+                    store.current.getPopper('tooltip') as PopperData & { instance: PopperInstance }
+                  )?.instance.update();
+                }
               }, 10);
             },
           );
@@ -216,7 +228,7 @@ export default function useJoyrideData(
       store.current.updateState({ action: ACTIONS.UPDATE, lifecycle: LIFECYCLE.INIT });
     }
 
-    const element = getElement(step?.target);
+    const element = getElement(step?.target, step?.shadowRootTarget);
     const elementExists = !!element;
 
     if (step && elementExists && isElementVisible(element)) {

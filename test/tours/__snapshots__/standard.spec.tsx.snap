@@ -127,7 +127,7 @@ exports[`Joyride > Standard > should render STEP 2 Tooltip > tooltip 1`] = `
   data-popper-placement="bottom"
   data-popper-reference-hidden=""
   id="react-joyride-step-1"
-  style="z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; transform: translate(0px, 20px);"
+  style="z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; right: auto; bottom: auto; transform: translate(0px, 20px);"
 >
   <div
     class="__floater"
@@ -263,7 +263,7 @@ exports[`Joyride > Standard > should render STEP 2 Tooltip AGAIN > tooltip 1`] =
   data-popper-placement="bottom"
   data-popper-reference-hidden=""
   id="react-joyride-step-1"
-  style="z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; transform: translate(0px, 20px);"
+  style="z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; right: auto; bottom: auto; transform: translate(0px, 20px);"
 >
   <div
     class="__floater"
@@ -384,7 +384,7 @@ exports[`Joyride > Standard > should render STEP 3 Beacon 1`] = `
   data-popper-placement="bottom"
   data-popper-reference-hidden=""
   id="react-joyride-step-2-wrapper"
-  style="cursor: help; z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; transform: translate(0px, -18px);"
+  style="cursor: help; z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; right: auto; bottom: auto; transform: translate(0px, -18px);"
 >
   <button
     aria-label="Open the dialog"
@@ -398,7 +398,7 @@ exports[`Joyride > Standard > should render STEP 3 Beacon 1`] = `
       style="animation: joyride-beacon-inner 1.2s infinite ease-in-out; background-color: rgb(255, 0, 68); border-radius: 50%; display: block; height: 50%; left: 50%; opacity: 0.7; position: absolute; top: 50%; transform: translate(-50%, -50%); width: 50%;"
     />
     <span
-      style="animation: joyride-beacon-outer 1.2s infinite ease-in-out; background-color: rgba(255, 0, 68, 0.2); border: 2px solid #f04; border-radius: 50%; box-sizing: border-box; display: block; height: 100%; left: 0px; opacity: 0.9; position: absolute; top: 0px; transform-origin: center; width: 100%;"
+      style="animation: joyride-beacon-outer 1.2s infinite ease-in-out; background-color: rgba(255, 0, 68, 0.2); border: 2px solid rgb(255, 0, 68); border-radius: 50%; box-sizing: border-box; display: block; height: 100%; left: 0px; opacity: 0.9; position: absolute; top: 0px; transform-origin: center; width: 100%;"
     />
   </button>
 </span>
@@ -425,7 +425,7 @@ exports[`Joyride > Standard > should render STEP 3 Tooltip > tooltip 1`] = `
   data-popper-placement="bottom"
   data-popper-reference-hidden=""
   id="react-joyride-step-2"
-  style="z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; transform: translate(0px, 20px);"
+  style="z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; right: auto; bottom: auto; transform: translate(0px, 20px);"
 >
   <div
     class="__floater"
@@ -567,7 +567,7 @@ exports[`Joyride > Standard > should render STEP 3 Tooltip AGAIN > tooltip 1`] =
   data-popper-placement="bottom"
   data-popper-reference-hidden=""
   id="react-joyride-step-2"
-  style="z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; transform: translate(0px, 20px);"
+  style="z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; right: auto; bottom: auto; transform: translate(0px, 20px);"
 >
   <div
     class="__floater"
@@ -694,7 +694,7 @@ exports[`Joyride > Standard > should render STEP 4 Beacon 1`] = `
   data-popper-placement="left"
   data-popper-reference-hidden=""
   id="react-joyride-step-3-wrapper"
-  style="cursor: help; z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; right: 0px; transform: translate(18px, 0px);"
+  style="cursor: help; z-index: 200; position: absolute; left: auto; top: 0px; margin: 0px; right: 0px; bottom: auto; transform: translate(18px, 0px);"
 >
   <button
     aria-label="Open the dialog"
@@ -708,7 +708,7 @@ exports[`Joyride > Standard > should render STEP 4 Beacon 1`] = `
       style="animation: joyride-beacon-inner 1.2s infinite ease-in-out; background-color: rgb(255, 0, 68); border-radius: 50%; display: block; height: 50%; left: 50%; opacity: 0.7; position: absolute; top: 50%; transform: translate(-50%, -50%); width: 50%;"
     />
     <span
-      style="animation: joyride-beacon-outer 1.2s infinite ease-in-out; background-color: rgba(255, 0, 68, 0.2); border: 2px solid #f04; border-radius: 50%; box-sizing: border-box; display: block; height: 100%; left: 0px; opacity: 0.9; position: absolute; top: 0px; transform-origin: center; width: 100%;"
+      style="animation: joyride-beacon-outer 1.2s infinite ease-in-out; background-color: rgba(255, 0, 68, 0.2); border: 2px solid rgb(255, 0, 68); border-radius: 50%; box-sizing: border-box; display: block; height: 100%; left: 0px; opacity: 0.9; position: absolute; top: 0px; transform-origin: center; width: 100%;"
     />
   </button>
 </span>
@@ -735,7 +735,7 @@ exports[`Joyride > Standard > should render STEP 4 Tooltip > tooltip 1`] = `
   data-popper-placement="left"
   data-popper-reference-hidden=""
   id="react-joyride-step-3"
-  style="z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; right: 0px; transform: translate(-20px, 0px);"
+  style="z-index: 200; position: absolute; left: auto; top: 0px; margin: 0px; right: 0px; bottom: auto; transform: translate(-20px, 0px);"
 >
   <div
     class="__floater"
@@ -890,7 +890,7 @@ exports[`Joyride > Standard > should render STEP 6 Tooltip > tooltip 1`] = `
   data-popper-placement="top"
   data-popper-reference-hidden=""
   id="react-joyride-step-5"
-  style="z-index: 200; position: absolute; left: 0px; top: 0px; margin: 0px; bottom: 0px; transform: translate(0px, -20px);"
+  style="z-index: 200; position: absolute; left: 0px; top: auto; margin: 0px; right: auto; bottom: 0px; transform: translate(0px, -20px);"
 >
   <div
     class="__floater"

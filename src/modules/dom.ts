@@ -1,5 +1,28 @@
 import scroll from 'scroll';
-import scrollParent from 'scrollparent';
+
+function isScrolling(node: Element) {
+  const overflow = getComputedStyle(node, null).getPropertyValue('overflow');
+
+  return overflow.includes('scroll') || overflow.includes('auto');
+}
+
+function scrollParent(node: Element): HTMLElement | undefined {
+  if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
+    return undefined;
+  }
+
+  let current = node.parentNode;
+
+  while (current?.parentNode) {
+    if (isScrolling(current as HTMLElement)) {
+      return current as HTMLElement;
+    }
+
+    current = current.parentNode;
+  }
+
+  return (document.scrollingElement || document.documentElement) as HTMLElement;
+}
 
 export function canUseDOM() {
   return !!(typeof window !== 'undefined' && window.document?.createElement);
@@ -55,14 +78,26 @@ export function getDocumentHeight(median = false): number {
 /**
  * Find and return the target DOM element based on a step's 'target'.
  */
-export function getElement(element?: string | HTMLElement): HTMLElement | null {
+export function getElement(
+  element?: string | HTMLElement,
+  parentElement?: string | HTMLElement,
+): HTMLElement | null {
   if (!element) {
     return null;
   }
 
+  let rootElement: Document | ShadowRoot = document;
+
+  if (parentElement) {
+    rootElement =
+      typeof parentElement === 'string'
+        ? document.getElementById(parentElement)?.shadowRoot || document
+        : parentElement.shadowRoot || document;
+  }
+
   if (typeof element === 'string') {
     try {
-      return document.querySelector(element);
+      return rootElement.querySelector(element);
     } catch (error: any) {
       if (process.env.NODE_ENV !== 'production') {
         // eslint-disable-next-line no-console
@@ -77,14 +112,38 @@ export function getElement(element?: string | HTMLElement): HTMLElement | null {
 }
 
 /**
- *  Get computed style property
+ * Find and return the target DOM element based on a step's 'target'.
  */
-export function getStyleComputedProperty(el: HTMLElement): CSSStyleDeclaration | null {
-  if (!el || el.nodeType !== 1) {
-    return null;
+export function getElementPosition(
+  element: HTMLElement | null,
+  offset: number,
+  skipFix: boolean,
+): number {
+  const elementRect = getClientRect(element);
+  const parent = getScrollParent(element, skipFix);
+  const hasScrollParent = hasCustomScrollParent(element, skipFix);
+  const isFixedTarget = hasPosition(element);
+  let parentTop = 0;
+  let top = elementRect?.top ?? 0;
+
+  if (hasScrollParent && isFixedTarget) {
+    const offsetTop = element?.offsetTop ?? 0;
+    const parentScrollTop = (parent as HTMLElement)?.scrollTop ?? 0;
+
+    top = offsetTop - parentScrollTop;
+  } else if (parent instanceof HTMLElement) {
+    parentTop = parent.scrollTop;
+
+    if (!hasScrollParent && !hasPosition(element)) {
+      top += parentTop;
+    }
+
+    if (!parent.isSameNode(scrollDocument())) {
+      top += scrollDocument().scrollTop;
+    }
   }
 
-  return getComputedStyle(el);
+  return Math.floor(top - offset);
 }
 
 /**
@@ -123,6 +182,44 @@ export function getScrollParent(
 }
 
 /**
+ * Get the scrollTop position
+ */
+export function getScrollTo(element: HTMLElement | null, offset: number, skipFix: boolean): number {
+  if (!element) {
+    return 0;
+  }
+
+  const { offsetTop = 0, scrollTop = 0 } = scrollParent(element) ?? {};
+  let top = element.getBoundingClientRect().top + scrollTop;
+
+  if (!!offsetTop && (hasCustomScrollParent(element, skipFix) || hasCustomOffsetParent(element))) {
+    top -= offsetTop;
+  }
+
+  const output = Math.floor(top - offset);
+
+  return output < 0 ? 0 : output;
+}
+
+/**
+ *  Get computed style property
+ */
+export function getStyleComputedProperty(el: HTMLElement): CSSStyleDeclaration | null {
+  if (!el || el.nodeType !== 1) {
+    return null;
+  }
+
+  return getComputedStyle(el);
+}
+
+/**
+ * Check if the element has custom offset parent
+ */
+export function hasCustomOffsetParent(element: HTMLElement): boolean {
+  return element.offsetParent !== document.body;
+}
+
+/**
  * Check if the element has custom scroll parent
  */
 export function hasCustomScrollParent(element: HTMLElement | null, skipFix: boolean): boolean {
@@ -133,13 +230,6 @@ export function hasCustomScrollParent(element: HTMLElement | null, skipFix: bool
   const parent = getScrollParent(element, skipFix);
 
   return parent ? !parent.isSameNode(scrollDocument()) : false;
-}
-
-/**
- * Check if the element has custom offset parent
- */
-export function hasCustomOffsetParent(element: HTMLElement): boolean {
-  return element.offsetParent !== document.body;
 }
 
 /**
@@ -195,61 +285,6 @@ export function isElementVisible(element: HTMLElement): element is HTMLElement {
   }
 
   return true;
-}
-
-/**
- * Find and return the target DOM element based on a step's 'target'.
- */
-export function getElementPosition(
-  element: HTMLElement | null,
-  offset: number,
-  skipFix: boolean,
-): number {
-  const elementRect = getClientRect(element);
-  const parent = getScrollParent(element, skipFix);
-  const hasScrollParent = hasCustomScrollParent(element, skipFix);
-  const isFixedTarget = hasPosition(element);
-  let parentTop = 0;
-  let top = elementRect?.top ?? 0;
-
-  if (hasScrollParent && isFixedTarget) {
-    const offsetTop = element?.offsetTop ?? 0;
-    const parentScrollTop = (parent as HTMLElement)?.scrollTop ?? 0;
-
-    top = offsetTop - parentScrollTop;
-  } else if (parent instanceof HTMLElement) {
-    parentTop = parent.scrollTop;
-
-    if (!hasScrollParent && !hasPosition(element)) {
-      top += parentTop;
-    }
-
-    if (!parent.isSameNode(scrollDocument())) {
-      top += scrollDocument().scrollTop;
-    }
-  }
-
-  return Math.floor(top - offset);
-}
-
-/**
- * Get the scrollTop position
- */
-export function getScrollTo(element: HTMLElement | null, offset: number, skipFix: boolean): number {
-  if (!element) {
-    return 0;
-  }
-
-  const { offsetTop = 0, scrollTop = 0 } = scrollParent(element) ?? {};
-  let top = element.getBoundingClientRect().top + scrollTop;
-
-  if (!!offsetTop && (hasCustomScrollParent(element, skipFix) || hasCustomOffsetParent(element))) {
-    top -= offsetTop;
-  }
-
-  const output = Math.floor(top - offset);
-
-  return output < 0 ? 0 : output;
 }
 
 export function scrollDocument(): Element | HTMLElement {

@@ -2,15 +2,14 @@ import { Props as FloaterProps } from 'react-floater';
 import deepEqual from '@gilbarbara/deep-equal';
 import is from 'is-lite';
 
-import { getMergedStep } from '~/modules/step';
-
 import { ACTIONS, LIFECYCLE, STATUS } from '~/literals';
+import { getMergedStep } from '~/modules/step';
 
 import { Origin, Props, State, Status, Step, StoreHelpers } from '~/types';
 
-type StateWithContinuous = State & { continuous: boolean };
 type Listener = (state: State) => void;
-type PopperData = Parameters<NonNullable<FloaterProps['getPopper']>>[0];
+type StateWithContinuous = State & { continuous: boolean };
+export type PopperData = Parameters<NonNullable<FloaterProps['getPopper']>>[0];
 
 const defaultState: State = {
   action: 'init',
@@ -21,6 +20,8 @@ const defaultState: State = {
   size: 0,
   status: STATUS.IDLE,
 };
+
+export type StoreInstance = ReturnType<typeof createStore>;
 
 class Store {
   private beaconPopper: PopperData | null;
@@ -168,13 +169,13 @@ class Store {
     }
 
     return {
-      action: this.store.get('action') || '',
-      controlled: this.store.get('controlled') || false,
+      action: this.store.get('action') ?? '',
+      controlled: this.store.get('controlled') ?? false,
       index: parseInt(this.store.get('index'), 10),
-      lifecycle: this.store.get('lifecycle') || '',
-      origin: this.store.get('origin') || null,
-      size: this.store.get('size') || 0,
-      status: (this.store.get('status') as Status) || '',
+      lifecycle: this.store.get('lifecycle') ?? '',
+      origin: this.store.get('origin') ?? null,
+      size: this.store.get('size') ?? 0,
+      status: (this.store.get('status') as Status) ?? '',
     };
   }
 
@@ -336,8 +337,6 @@ class Store {
     });
   };
 }
-
-export type StoreInstance = ReturnType<typeof createStore>;
 
 export default function createStore(options?: Props) {
   return new Store(options);

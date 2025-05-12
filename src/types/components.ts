@@ -4,10 +4,6 @@ import { PartialDeep, SetRequired, Simplify } from '@gilbarbara/types';
 
 import { Actions, Events, Lifecycle, Locale, Origin, Placement, Status, Styles } from './common';
 
-export type FloaterProps = Omit<FProps, 'content' | 'component'>;
-
-export type SelectorOrElement = string | null | HTMLElement;
-
 export type BaseProps = {
   /**
    * A React component to use instead the default Beacon.
@@ -29,14 +25,14 @@ export type BaseProps = {
    */
   disableOverlayClose?: boolean;
   /**
+   * @default false
+   */
+  disableScrolling?: boolean;
+  /**
    * Disable the fix to handle "unused" overflow parents.
    * @default false
    */
   disableScrollParentFix?: boolean;
-  /**
-   * @default false
-   */
-  disableScrolling?: boolean;
   /**
    * Options to be passed to react-floater
    */
@@ -142,6 +138,8 @@ export type CallBackProps = {
   type: Events;
 };
 
+export type FloaterProps = Omit<FProps, 'content' | 'component'>;
+
 export type OverlayProps = Simplify<
   StepMerged & {
     continuous: boolean;
@@ -213,6 +211,8 @@ export type Props = Simplify<
   }
 >;
 
+export type SelectorOrElement = string | null | HTMLElement;
+
 export type State = {
   action: Actions;
   controlled: boolean;
@@ -270,6 +270,11 @@ export type Step = Simplify<
      * The placement of the beacon. It will use the `placement` if nothing is passed
      */
     placementBeacon?: Placement;
+    /**
+     * If the target is in a shadow root, you can pass the shadow root here.
+     * It can be a CSS selector or an HTMLElement ref.
+     */
+    shadowRootTarget?: string | HTMLElement;
     /**
      * The target for the step.
      * It can be a CSS selector or an HTMLElement ref.

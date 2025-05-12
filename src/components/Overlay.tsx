@@ -2,6 +2,7 @@ import { CSSProperties, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useIsMounted, useMount, useSetState, useUnmount } from '@gilbarbara/hooks';
 import useTreeChanges from 'tree-changes-hook';
 
+import { LIFECYCLE } from '~/literals';
 import {
   getClientRect,
   getDocumentHeight,
@@ -13,18 +14,9 @@ import {
 } from '~/modules/dom';
 import { getBrowser, isLegacy, log } from '~/modules/helpers';
 
-import { LIFECYCLE } from '~/literals';
-
 import { Lifecycle, OverlayProps } from '~/types';
 
 import Spotlight from './Spotlight';
-
-interface State {
-  isScrolling: boolean;
-  mouseOverSpotlight: boolean;
-  resizedAt: number;
-  showSpotlight: boolean;
-}
 
 interface SpotlightStyles extends CSSProperties {
   height: number;
@@ -33,7 +25,14 @@ interface SpotlightStyles extends CSSProperties {
   width: number;
 }
 
-export default function JoyrideOverlay(props: OverlayProps) {
+interface State {
+  isScrolling: boolean;
+  mouseOverSpotlight: boolean;
+  resizedAt: number;
+  showSpotlight: boolean;
+}
+
+export default function JoyrideOverlay(props: Readonly<OverlayProps>) {
   const {
     continuous,
     debug,
@@ -44,6 +43,7 @@ export default function JoyrideOverlay(props: OverlayProps) {
     lifecycle,
     onClickOverlay,
     placement,
+    shadowRootTarget,
     spotlightClicks,
     spotlightPadding = 0,
     styles,
@@ -97,7 +97,7 @@ export default function JoyrideOverlay(props: OverlayProps) {
   ]);
 
   const spotlightStyles = useMemo(() => {
-    const element = getElement(target);
+    const element = getElement(target, shadowRootTarget);
     const elementRect = getClientRect(element);
     const isFixedTarget = hasPosition(element);
     const top = getElementPosition(element, spotlightPadding, disableScrollParentFix);
@@ -121,6 +121,7 @@ export default function JoyrideOverlay(props: OverlayProps) {
     styles.spotlight,
     styles.spotlightLegacy,
     target,
+    shadowRootTarget,
   ]);
 
   const handleMouseMove = useCallback(
@@ -153,7 +154,7 @@ export default function JoyrideOverlay(props: OverlayProps) {
   }, [isMounted, setState]);
 
   const handleScroll = useCallback(() => {
-    const element = getElement(target);
+    const element = getElement(target, shadowRootTarget);
 
     if (scrollParentRef.current !== document) {
       if (!isScrolling) {
@@ -168,10 +169,10 @@ export default function JoyrideOverlay(props: OverlayProps) {
     } else if (hasPosition(element, 'sticky')) {
       updateState({});
     }
-  }, [isScrolling, target, updateState]);
+  }, [isScrolling, target, updateState, shadowRootTarget]);
 
   useMount(() => {
-    const element = getElement(target);
+    const element = getElement(target, shadowRootTarget);
 
     scrollParentRef.current = getScrollParent(
       element ?? document.body,
@@ -226,7 +227,7 @@ export default function JoyrideOverlay(props: OverlayProps) {
 
   useEffect(() => {
     if (changed('target') || changed('disableScrollParentFix')) {
-      const element = getElement(target);
+      const element = getElement(target, shadowRootTarget);
 
       scrollParentRef.current = getScrollParent(
         element ?? document.body,
@@ -234,7 +235,7 @@ export default function JoyrideOverlay(props: OverlayProps) {
         true,
       );
     }
-  }, [changed, disableScrollParentFix, target]);
+  }, [changed, disableScrollParentFix, target, shadowRootTarget]);
 
   const hiddenLifecycles = [
     LIFECYCLE.INIT,
