@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
+import {ReactNode} from 'react';
 
-import { getReactNodeText } from '~/modules/helpers';
+import {getReactNodeText} from '~/modules/helpers';
 
-import { TooltipRenderProps } from '~/types';
+import {TooltipRenderProps} from '~/types';
 
 import CloseButton from './CloseButton';
 
@@ -58,10 +58,7 @@ export default function JoyrideTooltipContainer(props: Readonly<TooltipRenderPro
             {title}
           </h1>
         )}
-        <div
-          dangerouslySetInnerHTML={{ __html: content as TrustedHTML }}
-          style={styles.tooltipContent}
-        />
+        <div style={styles.tooltipContent}>{content}</div>
       </div>
       {!hideFooter && (
         <div style={styles.tooltipFooter}>
