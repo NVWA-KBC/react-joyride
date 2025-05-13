@@ -1,9 +1,10 @@
-import { useReducer, useRef } from 'react';
-
-import { scrollSteps } from './steps';
+import { useRef } from 'react';
+import { useSetState } from '@gilbarbara/hooks';
 
 import Joyride, { STATUS, StoreHelpers } from '../../src';
 import { CallBackProps, Props, Status, Step } from '../../src/types';
+
+import { scrollSteps } from './steps';
 
 interface State {
   run: boolean;
@@ -12,16 +13,10 @@ interface State {
 
 export default function Standard(props: Omit<Props, 'run' | 'steps'>) {
   const { callback, ...rest } = props;
-  const [{ run, steps }, setState] = useReducer(
-    (previousState: State, nextState: Partial<State>) => ({
-      ...previousState,
-      ...nextState,
-    }),
-    {
-      run: true,
-      steps: scrollSteps,
-    },
-  );
+  const [{ run, steps }, setState] = useSetState<State>({
+    run: true,
+    steps: scrollSteps,
+  });
   const helpersRef = useRef<StoreHelpers>();
 
   const handleJoyrideCallback = (data: CallBackProps) => {

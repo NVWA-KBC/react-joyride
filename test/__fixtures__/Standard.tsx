@@ -1,9 +1,10 @@
-import { useReducer, useRef } from 'react';
-
-import { standardSteps } from './steps';
+import { useRef } from 'react';
+import { useSetState } from '@gilbarbara/hooks';
 
 import Joyride, { STATUS, StoreHelpers } from '../../src';
 import { CallBackProps, Props, Status, Step } from '../../src/types';
+
+import { standardSteps } from './steps';
 
 interface State {
   index: number;
@@ -13,17 +14,19 @@ interface State {
 
 export default function Standard(props: Omit<Props, 'run' | 'steps'>) {
   const { callback, ...rest } = props;
-  const [{ run, steps }, setState] = useReducer(
-    (previousState: State, nextState: Partial<State>) => ({
-      ...previousState,
-      ...nextState,
-    }),
-    {
-      index: 0,
-      run: false,
-      steps: standardSteps,
-    },
-  );
+  const [{ run, steps }, setState] = useSetState<State>({
+    index: 0,
+    run: false,
+    steps: [
+      {
+        content: <h2>Let's begin our journey!</h2>,
+        locale: { skip: <strong aria-label="skip">S-K-I-P</strong> },
+        placement: 'center',
+        target: 'body',
+      },
+      ...standardSteps,
+    ],
+  });
   const helpersRef = useRef<StoreHelpers>();
 
   const handleClickStart = () => {
@@ -81,7 +84,7 @@ export default function Standard(props: Omit<Props, 'run' | 'steps'>) {
             <div className="list">
               <div>Installation</div>
               <div>Documentation</div>
-              <div>Support </div>
+              <div>Support</div>
             </div>
           </div>
         </div>
