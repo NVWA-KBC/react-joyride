@@ -102,6 +102,7 @@ export interface StylesOptions {
   arrowColor: string;
   backgroundColor: string;
   beaconSize: number;
+  maxHeight?: string | number;
   overlayColor: string;
   primaryColor: string;
   spotlightShadow: string;
