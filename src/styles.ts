@@ -13,6 +13,7 @@ const defaultOptions = {
   textColor: '#333',
   width: 380,
   zIndex: 100,
+  maxHeight: window.innerHeight - 100,
 } satisfies StylesOptions;
 
 const buttonBase = {
@@ -38,7 +39,7 @@ export default function getStyles(props: Props, step: StepMerged) {
   const mergedStyles = deepmerge(styles ?? {}, step.styles ?? {});
   const options = deepmerge(defaultOptions, mergedStyles.options || {}) satisfies StylesOptions;
   const hideBeacon = step.placement === 'center' || step.disableBeacon;
-  let { width } = options;
+  let { maxHeight, width } = options;
 
   if (window.innerWidth > 480) {
     width = 380;
@@ -49,6 +50,13 @@ export default function getStyles(props: Props, step: StepMerged) {
       typeof options.width === 'number' && window.innerWidth < options.width
         ? window.innerWidth - 30
         : options.width;
+  }
+
+  if ('maxHeight' in options) {
+    maxHeight =
+      typeof options.maxHeight === 'number' && window.innerHeight < options.maxHeight
+        ? window.innerHeight - 100
+        : options.maxHeight;
   }
 
   const overlay = {
@@ -119,6 +127,8 @@ export default function getStyles(props: Props, step: StepMerged) {
     },
     tooltipContent: {
       padding: '20px 10px',
+      maxHeight,
+      overflowY: 'auto',
     },
     tooltipFooter: {
       alignItems: 'center',
