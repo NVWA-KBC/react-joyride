@@ -1,8 +1,8 @@
-import { CSSProperties, useCallback, useEffect, useMemo, useRef } from 'react';
-import { useIsMounted, useMount, useSetState, useUnmount } from '@gilbarbara/hooks';
+import {CSSProperties, useCallback, useEffect, useMemo, useRef} from 'react';
+import {useIsMounted, useMount, useSetState, useUnmount} from '@gilbarbara/hooks';
 import useTreeChanges from 'tree-changes-hook';
 
-import { LIFECYCLE } from '~/literals';
+import {LIFECYCLE} from '~/literals';
 import {
   getClientRect,
   getDocumentHeight,
@@ -12,9 +12,9 @@ import {
   hasCustomScrollParent,
   hasPosition,
 } from '~/modules/dom';
-import { getBrowser, isLegacy, log } from '~/modules/helpers';
+import {getBrowser, isLegacy, log} from '~/modules/helpers';
 
-import { Lifecycle, OverlayProps } from '~/types';
+import {Lifecycle, OverlayProps} from '~/types';
 
 import Spotlight from './Spotlight';
 
@@ -107,11 +107,11 @@ export default function JoyrideOverlay(props: Readonly<OverlayProps>) {
       left: Math.round((elementRect?.left ?? 0) - spotlightPadding),
       opacity: showSpotlight ? 1 : 0,
       pointerEvents: spotlightClicks ? 'none' : 'auto',
-      position: isFixedTarget ? 'fixed' : 'absolute',
       top,
       transition: 'opacity 0.2s',
       width: Math.round((elementRect?.width ?? 0) + spotlightPadding * 2),
       ...(isLegacy() ? styles.spotlightLegacy : styles.spotlight),
+      position: isFixedTarget ? 'fixed' : 'absolute',
     } satisfies SpotlightStyles;
   }, [
     disableScrollParentFix,
