@@ -65,13 +65,9 @@ export default function JoyrideOverlay(props: Readonly<OverlayProps>) {
 
   const updateState = useCallback(
     (state: Partial<State>) => {
-      if (!isMounted) {
-        return;
-      }
-
       setState(state);
     },
-    [isMounted, setState],
+    [setState],
   );
 
   const overlayStyles = useMemo(() => {
@@ -124,6 +120,16 @@ export default function JoyrideOverlay(props: Readonly<OverlayProps>) {
     shadowRootTarget,
   ]);
 
+  // Use a ref to track current mouseOverSpotlight value to avoid circular dependencies
+  const mouseOverSpotlightRef = useRef(mouseOverSpotlight);
+  
+  // Update ref when state changes
+  useEffect(() => {
+    mouseOverSpotlightRef.current = mouseOverSpotlight;
+  }, [mouseOverSpotlight]);
+
+
+
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
       const { height, left, position, top, width } = spotlightStyles;
@@ -134,11 +140,11 @@ export default function JoyrideOverlay(props: Readonly<OverlayProps>) {
       const inSpotlightWidth = offsetX >= left && offsetX <= left + width;
       const inSpotlight = inSpotlightWidth && inSpotlightHeight;
 
-      if (inSpotlight !== mouseOverSpotlight) {
+      if (inSpotlight !== mouseOverSpotlightRef.current) {
         updateState({ mouseOverSpotlight: inSpotlight });
       }
     },
-    [spotlightStyles, mouseOverSpotlight, updateState],
+    [spotlightStyles, updateState],
   );
 
   const handleResize = useCallback(() => {
