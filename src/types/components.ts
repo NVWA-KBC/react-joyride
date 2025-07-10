@@ -48,6 +48,11 @@ export type BaseProps = {
    */
   hideCloseButton?: boolean;
   /**
+   * Hide the Next button.
+   * @default false
+   */
+  hideNextButton?: boolean;
+  /**
    * The strings used in the tooltip.
    */
   locale?: Locale;
@@ -300,6 +305,7 @@ export type StepMerged = Simplify<
     | 'hideBackButton'
     | 'hideCloseButton'
     | 'hideFooter'
+    | 'hideNextButton'
     | 'isFixed'
     | 'locale'
     | 'offset'

@@ -41,6 +41,9 @@ Get the store methods to control the tour programmatically. `prev, next, go, clo
 **hideBackButton** `boolean` ▶︎ **false**  
 Hide the **Back** button.
 
+**hideNextButton** `boolean` ▶︎ **false**  
+Hide the **Next** button.
+
 **hideCloseButton** `boolean` ▶︎ **false**  
 Hide the **Close** button.
 

@@ -70,6 +70,7 @@ Step will inherit some properties from Joyride's own [props](props.md), but you 
 - disableScrolling
 - floaterProps \(check the [getMergedStep](https://github.com/gilbarbara/react-joyride/blob/main/src/modules/step.ts) function for more information\)
 - hideBackButton
+- hideNextButton
 - hideCloseButton
 - locale
 - showProgress

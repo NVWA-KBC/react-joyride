@@ -23,6 +23,7 @@ function getTourProps(props: Props) {
     'floaterProps',
     'hideBackButton',
     'hideCloseButton',
+    'hideNextButton',
     'locale',
     'showProgress',
     'showSkipButton',
