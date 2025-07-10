@@ -1,5 +1,4 @@
-import { MutableRefObject, useCallback, useMemo, useRef } from 'react';
-import { PopperInstance } from 'react-floater';
+import { MutableRefObject, useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import isEqual from '@gilbarbara/deep-equal';
 import {
   useDeepCompareEffect,
@@ -14,17 +13,10 @@ import useTreeChanges from 'tree-changes-hook';
 
 import { defaultProps } from '~/defaults';
 import { ACTIONS, EVENTS, LIFECYCLE, STATUS } from '~/literals';
-import {
-  getElement,
-  getScrollParent,
-  getScrollTo,
-  hasCustomScrollParent,
-  isElementVisible,
-  scrollTo,
-} from '~/modules/dom';
+import { getElement, isElementVisible } from '~/modules/dom';
 import { hideBeacon, log, mergeProps, shouldScroll } from '~/modules/helpers';
 import { getMergedStep, validateSteps } from '~/modules/step';
-import createStore, { PopperData } from '~/modules/store';
+import createStore from '~/modules/store';
 
 import { Actions, Props, State, Status } from '~/types';
 
@@ -35,6 +27,7 @@ export default function useJoyrideData(
     callback,
     continuous,
     debug,
+    lockPageScroll,
     disableScrollParentFix,
     getHelpers,
     run,
@@ -51,6 +44,29 @@ export default function useJoyrideData(
   const { action, controlled, index, lifecycle, size, status } = state;
   const lastAction = useRef<Actions | null>(null);
 
+  // Add DOM stability detection
+  const [stableElement, setStableElement] = useState<HTMLElement | null>(null);
+  const elementPollingRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Scroll control
+  const disablePageScroll = useCallback(() => {
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.top = `-${window.scrollY}px`;
+  }, []);
+
+  const enablePageScroll = useCallback(() => {
+    const scrollY = document.body.style.top;
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+    document.body.style.top = '';
+    if (scrollY) {
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    }
+  }, []);
+
   const previousProps = usePrevious(props);
   const previousState = usePrevious(state);
   const { changed: changedProps } = useTreeChanges(props);
@@ -59,6 +75,50 @@ export default function useJoyrideData(
   const step = useMemo(() => getMergedStep(props, steps[index]), [index, props, steps]);
 
   const previousStep = useMemo(() => getMergedStep(props, steps[index - 1]), [index, props, steps]);
+
+  // DOM stability polling logic
+  useEffect(() => {
+    // Clear any existing polling
+    if (elementPollingRef.current) {
+      clearTimeout(elementPollingRef.current);
+      elementPollingRef.current = null;
+    }
+
+    if (!step?.target) {
+      setStableElement(null);
+      return;
+    }
+
+    let attempts = 0;
+    const maxAttempts = 20; // 1 second max (20 * 50ms)
+
+    const checkElement = () => {
+      const foundElement = getElement(step.target, step.shadowRootTarget);
+
+      if (foundElement && isElementVisible(foundElement)) {
+        setStableElement(foundElement);
+        return;
+      }
+
+      attempts++;
+      if (attempts < maxAttempts) {
+        elementPollingRef.current = setTimeout(checkElement, 50);
+      } else {
+        // Element not found after max attempts
+        setStableElement(null);
+      }
+    };
+
+    checkElement();
+
+    // Cleanup function
+    return () => {
+      if (elementPollingRef.current) {
+        clearTimeout(elementPollingRef.current);
+        elementPollingRef.current = null;
+      }
+    };
+  }, [step?.target, step?.shadowRootTarget]);
 
   useSingleton(() => {
     store.current.addListener(newState => {
@@ -72,77 +132,38 @@ export default function useJoyrideData(
         return;
       }
 
-      const target = getElement(step.target, step.shadowRootTarget);
+      // Use stable element if available, otherwise fall back to regular element detection
+      const targetElement = stableElement || getElement(step.target, step.shadowRootTarget);
+
+      if (!targetElement) {
+        return;
+      }
+
       const shouldScrollToStep = shouldScroll({
         isFirstStep: index === 0,
         lifecycle,
         previousLifecycle: lastState.lifecycle,
         scrollToFirstStep,
         step,
-        target,
+        target: targetElement,
       });
       const beaconPopper = store.current.getPopper('beacon');
       const tooltipPopper = store.current.getPopper('tooltip');
 
       if (status === STATUS.RUNNING && shouldScrollToStep) {
-        const hasCustomScroll = hasCustomScrollParent(target, disableScrollParentFix);
-        const scrollParent = getScrollParent(target, disableScrollParentFix);
-        let scrollY = Math.floor(getScrollTo(target, scrollOffset, disableScrollParentFix)) || 0;
-
-        log({
-          title: 'scrollToStep',
-          data: [
-            { key: 'index', value: index },
-            { key: 'lifecycle', value: lifecycle },
-            { key: 'status', value: status },
-          ],
-          debug,
-        });
-
-        if (lifecycle === LIFECYCLE.BEACON && beaconPopper) {
-          const { modifiersData, placement } = beaconPopper.state ?? {};
-          const { offset } = modifiersData ?? {};
-          const y = offset?.top?.y ?? 0;
-
-          if (!['bottom'].includes(placement) && !hasCustomScroll) {
-            scrollY = Math.floor(y - scrollOffset);
+        // Since page scrolling is disabled, focus only on positioning updates
+        setTimeout(() => {
+          // Update popper positioning
+          if (beaconPopper) {
+            beaconPopper.update();
           }
-        } else if (lifecycle === LIFECYCLE.TOOLTIP && tooltipPopper) {
-          const { modifiersData, placement } = tooltipPopper.state ?? {};
-          const { offset } = modifiersData ?? {};
-          const y = offset?.top?.y ?? 0;
-          const flipped = !!placement && placement !== step.placement;
-
-          if (['left', 'right', 'top'].includes(placement) && !flipped && !hasCustomScroll) {
-            scrollY = Math.floor(y - scrollOffset);
-          } else {
-            scrollY -= step.spotlightPadding;
+          if (tooltipPopper) {
+            tooltipPopper.update();
           }
-        }
 
-        scrollY = scrollY >= 0 ? scrollY : 0;
-
-        if (status === STATUS.RUNNING) {
-          scrollTo(scrollY, { element: scrollParent as Element, duration: scrollDuration }).then(
-            () => {
-              setTimeout(() => {
-                const popper = store.current.getPopper('tooltip');
-
-                if (!popper) {
-                  return;
-                }
-
-                if (Object.hasOwn(popper, 'update')) {
-                  popper?.update();
-                } else if (Object.hasOwn(popper, 'instance')) {
-                  (
-                    store.current.getPopper('tooltip') as PopperData & { instance: PopperInstance }
-                  )?.instance.update();
-                }
-              }, 10);
-            },
-          );
-        }
+          // Force a resize event to trigger repositioning
+          window.dispatchEvent(new Event('resize'));
+        }, 100);
       }
     },
     [
@@ -155,6 +176,7 @@ export default function useJoyrideData(
       scrollToFirstStep,
       status,
       step,
+      stableElement,
     ],
   );
 
@@ -167,6 +189,22 @@ export default function useJoyrideData(
       getHelpers(store.current.getHelpers());
     }
   });
+
+  // Disable page scrolling when tour is active
+  useEffect(() => {
+    if (status === STATUS.RUNNING && lockPageScroll) {
+      disablePageScroll();
+    } else if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
+      enablePageScroll();
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (status === STATUS.RUNNING && lockPageScroll) {
+        enablePageScroll();
+      }
+    };
+  }, [status, lockPageScroll, disablePageScroll, enablePageScroll]);
 
   /**
    * Handle updated status

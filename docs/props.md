@@ -32,6 +32,9 @@ Disable autoscrolling between steps.
 **disableScrollParentFix** `boolean` ▶︎ **false**  
 Disable the fix to handle "unused" overflow parents.
 
+**lockPageScroll** `boolean` ▶︎ **false**  
+Disable page scrolling when the tour is active. When enabled, users cannot manually scroll the page while the tour is running.
+
 **floaterProps** `Partial<FloaterProps>`  
 Options to be passed to [react-floater](https://github.com/gilbarbara/react-floater).
 

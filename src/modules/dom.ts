@@ -291,26 +291,42 @@ export function scrollDocument(): Element | HTMLElement {
   return document.scrollingElement ?? document.documentElement;
 }
 
-/**
- * Scroll to position
- */
-export function scrollTo(
-  value: number,
-  options: { duration?: number; element: Element | HTMLElement },
-): Promise<void> {
-  const { duration, element } = options;
+export const scrollTo = (
+  scrollY: number,
+  options: {
+    element?: Element;
+    duration?: number;
+  } = {},
+): Promise<void> => {
+  const { element = window, duration = 600 } = options;
 
-  return new Promise((resolve, reject) => {
-    const { scrollTop } = element;
+  return new Promise(resolve => {
+    // Check if element is already at the target position
+    const currentScroll =
+      element === window ? window.pageYOffset : (element as HTMLElement).scrollTop;
+    if (Math.abs(currentScroll - scrollY) < 5) {
+      resolve();
+      return;
+    }
 
-    const limit = value > scrollTop ? value - scrollTop : scrollTop - value;
+    // Use native scrollIntoView for better performance and less bounce
+    if (element !== window && element instanceof HTMLElement) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center',
+      });
 
-    scroll.top(element as HTMLElement, value, { duration: limit < 100 ? 50 : duration }, error => {
-      if (error && error.message !== 'Element already at target scroll position') {
-        return reject(error);
-      }
-
-      return resolve();
-    });
+      // Resolve after a short delay
+      setTimeout(resolve, 300);
+    } else {
+      // Fallback to the original scroll library for window scrolling
+      scroll.top(element as HTMLElement, scrollY, { duration }, error => {
+        if (error && error.message !== 'Element already at target scroll position') {
+          console.warn('Scroll error:', error);
+        }
+        setTimeout(resolve, 50);
+      });
+    }
   });
-}
+};

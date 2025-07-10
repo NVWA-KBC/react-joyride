@@ -34,6 +34,11 @@ export type BaseProps = {
    */
   disableScrollParentFix?: boolean;
   /**
+   * Disable page scrolling when the tour is active.
+   * @default false
+   */
+  lockPageScroll?: boolean;
+  /**
    * Options to be passed to react-floater
    */
   floaterProps?: Partial<FloaterProps>;
@@ -301,6 +306,7 @@ export type StepMerged = Simplify<
     | 'disableOverlayClose'
     | 'disableScrollParentFix'
     | 'disableScrolling'
+    | 'lockPageScroll'
     | 'event'
     | 'hideBackButton'
     | 'hideCloseButton'

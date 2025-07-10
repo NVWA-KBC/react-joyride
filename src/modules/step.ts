@@ -20,6 +20,7 @@ function getTourProps(props: Props) {
     'disableOverlayClose',
     'disableScrolling',
     'disableScrollParentFix',
+    'lockPageScroll',
     'floaterProps',
     'hideBackButton',
     'hideCloseButton',
