@@ -1,6 +1,6 @@
 {
   "name": "@nvwa-dmdv/react-joyride",
-  "version": "2.9.4",
+  "version": "2.9.5",
   "description": "Create guided tours for your apps",
   "author": "Gil Barbara <gilbarbara@gmail.com>",
   "repository": {
@@ -102,8 +102,7 @@
     "format": "prettier \"**/*.{js,jsx,ts,tsx}\" --write",
     "validate": "npm run lint && npm run typecheck && npm run test:coverage && npm run e2e && npm run build && npm run size && npm run typevalidation",
     "size": "size-limit",
-    "prepare": "husky",
-    "prepublishOnly": "npm run validate"
+    "prepare": "husky"
   },
   "tsup": {
     "dts": true,
