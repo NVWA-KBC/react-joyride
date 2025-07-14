@@ -1,5 +1,3 @@
-import scroll from 'scroll';
-
 function isScrolling(node: Element) {
   const overflow = getComputedStyle(node, null).getPropertyValue('overflow');
 
@@ -289,28 +287,4 @@ export function isElementVisible(element: HTMLElement): element is HTMLElement {
 
 export function scrollDocument(): Element | HTMLElement {
   return document.scrollingElement ?? document.documentElement;
-}
-
-/**
- * Scroll to position
- */
-export function scrollTo(
-  value: number,
-  options: { duration?: number; element: Element | HTMLElement },
-): Promise<void> {
-  const { duration, element } = options;
-
-  return new Promise((resolve, reject) => {
-    const { scrollTop } = element;
-
-    const limit = value > scrollTop ? value - scrollTop : scrollTop - value;
-
-    scroll.top(element as HTMLElement, value, { duration: limit < 100 ? 50 : duration }, error => {
-      if (error && error.message !== 'Element already at target scroll position') {
-        return reject(error);
-      }
-
-      return resolve();
-    });
-  });
 }

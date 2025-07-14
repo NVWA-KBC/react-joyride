@@ -34,6 +34,11 @@ export type BaseProps = {
    */
   disableScrollParentFix?: boolean;
   /**
+   * Disable page scrolling when the tour is active.
+   * @default false
+   */
+  lockPageScroll?: boolean;
+  /**
    * Options to be passed to react-floater
    */
   floaterProps?: Partial<FloaterProps>;
@@ -47,6 +52,11 @@ export type BaseProps = {
    * @default false
    */
   hideCloseButton?: boolean;
+  /**
+   * Hide the Next button.
+   * @default false
+   */
+  hideNextButton?: boolean;
   /**
    * The strings used in the tooltip.
    */
@@ -296,10 +306,12 @@ export type StepMerged = Simplify<
     | 'disableOverlayClose'
     | 'disableScrollParentFix'
     | 'disableScrolling'
+    | 'lockPageScroll'
     | 'event'
     | 'hideBackButton'
     | 'hideCloseButton'
     | 'hideFooter'
+    | 'hideNextButton'
     | 'isFixed'
     | 'locale'
     | 'offset'

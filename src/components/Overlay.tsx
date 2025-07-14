@@ -65,13 +65,9 @@ export default function JoyrideOverlay(props: Readonly<OverlayProps>) {
 
   const updateState = useCallback(
     (state: Partial<State>) => {
-      if (!isMounted) {
-        return;
-      }
-
       setState(state);
     },
-    [isMounted, setState],
+    [setState],
   );
 
   const overlayStyles = useMemo(() => {
@@ -124,21 +120,38 @@ export default function JoyrideOverlay(props: Readonly<OverlayProps>) {
     shadowRootTarget,
   ]);
 
+  // Use a ref to track current mouseOverSpotlight value to avoid circular dependencies
+  const mouseOverSpotlightRef = useRef(mouseOverSpotlight);
+  
+  // Update ref when state changes
+  useEffect(() => {
+    mouseOverSpotlightRef.current = mouseOverSpotlight;
+  }, [mouseOverSpotlight]);
+
+
+
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
       const { height, left, position, top, width } = spotlightStyles;
 
       const offsetY = position === 'fixed' ? event.clientY : event.pageY;
       const offsetX = position === 'fixed' ? event.clientX : event.pageX;
-      const inSpotlightHeight = offsetY >= top && offsetY <= top + height;
-      const inSpotlightWidth = offsetX >= left && offsetX <= left + width;
+      
+      // Account for spotlightPadding - exclude padding area from clickable region
+      const clickableTop = top + spotlightPadding;
+      const clickableLeft = left + spotlightPadding;
+      const clickableHeight = height - (spotlightPadding * 2);
+      const clickableWidth = width - (spotlightPadding * 2);
+      
+      const inSpotlightHeight = offsetY >= clickableTop && offsetY <= clickableTop + clickableHeight;
+      const inSpotlightWidth = offsetX >= clickableLeft && offsetX <= clickableLeft + clickableWidth;
       const inSpotlight = inSpotlightWidth && inSpotlightHeight;
 
-      if (inSpotlight !== mouseOverSpotlight) {
+      if (inSpotlight !== mouseOverSpotlightRef.current) {
         updateState({ mouseOverSpotlight: inSpotlight });
       }
     },
-    [spotlightStyles, mouseOverSpotlight, updateState],
+    [spotlightStyles, updateState, spotlightPadding],
   );
 
   const handleResize = useCallback(() => {
