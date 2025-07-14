@@ -136,15 +136,22 @@ export default function JoyrideOverlay(props: Readonly<OverlayProps>) {
 
       const offsetY = position === 'fixed' ? event.clientY : event.pageY;
       const offsetX = position === 'fixed' ? event.clientX : event.pageX;
-      const inSpotlightHeight = offsetY >= top && offsetY <= top + height;
-      const inSpotlightWidth = offsetX >= left && offsetX <= left + width;
+      
+      // Account for spotlightPadding - exclude padding area from clickable region
+      const clickableTop = top + spotlightPadding;
+      const clickableLeft = left + spotlightPadding;
+      const clickableHeight = height - (spotlightPadding * 2);
+      const clickableWidth = width - (spotlightPadding * 2);
+      
+      const inSpotlightHeight = offsetY >= clickableTop && offsetY <= clickableTop + clickableHeight;
+      const inSpotlightWidth = offsetX >= clickableLeft && offsetX <= clickableLeft + clickableWidth;
       const inSpotlight = inSpotlightWidth && inSpotlightHeight;
 
       if (inSpotlight !== mouseOverSpotlightRef.current) {
         updateState({ mouseOverSpotlight: inSpotlight });
       }
     },
-    [spotlightStyles, updateState],
+    [spotlightStyles, updateState, spotlightPadding],
   );
 
   const handleResize = useCallback(() => {
