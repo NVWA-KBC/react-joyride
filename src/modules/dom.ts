@@ -1,5 +1,3 @@
-import scroll from 'scroll';
-
 function isScrolling(node: Element) {
   const overflow = getComputedStyle(node, null).getPropertyValue('overflow');
 
@@ -290,43 +288,3 @@ export function isElementVisible(element: HTMLElement): element is HTMLElement {
 export function scrollDocument(): Element | HTMLElement {
   return document.scrollingElement ?? document.documentElement;
 }
-
-export const scrollTo = (
-  scrollY: number,
-  options: {
-    element?: Element;
-    duration?: number;
-  } = {},
-): Promise<void> => {
-  const { element = window, duration = 600 } = options;
-
-  return new Promise(resolve => {
-    // Check if element is already at the target position
-    const currentScroll =
-      element === window ? window.pageYOffset : (element as HTMLElement).scrollTop;
-    if (Math.abs(currentScroll - scrollY) < 5) {
-      resolve();
-      return;
-    }
-
-    // Use native scrollIntoView for better performance and less bounce
-    if (element !== window && element instanceof HTMLElement) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'center',
-      });
-
-      // Resolve after a short delay
-      setTimeout(resolve, 300);
-    } else {
-      // Fallback to the original scroll library for window scrolling
-      scroll.top(element as HTMLElement, scrollY, { duration }, error => {
-        if (error && error.message !== 'Element already at target scroll position') {
-          console.warn('Scroll error:', error);
-        }
-        setTimeout(resolve, 50);
-      });
-    }
-  });
-};
