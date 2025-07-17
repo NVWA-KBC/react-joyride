@@ -1,8 +1,8 @@
-import { CSSProperties, ReactNode } from 'react';
-import { Styles as FloaterStyles } from 'react-floater';
-import { PartialDeep, ValueOf } from '@gilbarbara/types';
+import {CSSProperties, ReactNode} from 'react';
+import {Styles as FloaterStyles} from 'react-floater';
+import {PartialDeep, ValueOf} from '@gilbarbara/types';
 
-import { ACTIONS, EVENTS, LIFECYCLE, ORIGIN, STATUS } from '~/literals';
+import {ACTIONS, EVENTS, LIFECYCLE, ORIGIN, STATUS} from '~/literals';
 
 export type Actions = ValueOf<typeof ACTIONS>;
 export type AnyObject<T = any> = Record<string, T>;
@@ -96,6 +96,7 @@ export interface Styles {
   tooltipFooter: CSSProperties;
   tooltipFooterSpacer: CSSProperties;
   tooltipTitle: CSSProperties;
+  tooltipFooterProgress: CSSProperties;
 }
 
 export interface StylesOptions {
