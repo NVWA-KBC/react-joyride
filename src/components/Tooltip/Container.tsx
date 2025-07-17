@@ -1,15 +1,15 @@
-import { ReactNode } from 'react';
+import {ReactNode} from 'react';
 
-import { getReactNodeText } from '~/modules/helpers';
+import {getReactNodeText} from '~/modules/helpers';
 
-import { TooltipRenderProps } from '~/types';
+import {TooltipRenderProps} from '~/types';
 
 import CloseButton from './CloseButton';
 
 export default function JoyrideTooltipContainer(props: Readonly<TooltipRenderProps>) {
   const { backProps, closeProps, index, isLastStep, primaryProps, skipProps, step, tooltipProps } =
     props;
-  const { content, hideBackButton, hideCloseButton, hideFooter, hideNextButton, showSkipButton, styles, title } =
+  const { content, hideBackButton, hideCloseButton, hideFooter, hideNextButton, showSkipButton, styles, title, showProgress  } =
     step;
   const output: Record<string, ReactNode> = {};
 
@@ -22,6 +22,8 @@ export default function JoyrideTooltipContainer(props: Readonly<TooltipRenderPro
         {...primaryProps}
       />
     );
+  } else {
+    output.primary = <span></span>;
   }
 
   if (showSkipButton && !isLastStep) {
@@ -40,6 +42,8 @@ export default function JoyrideTooltipContainer(props: Readonly<TooltipRenderPro
     output.back = (
       <button data-test-id="button-back" style={styles.buttonBack} type="button" {...backProps} />
     );
+  } else {
+    output.back = <span></span>;
   }
 
   output.close = !hideCloseButton && (
@@ -64,8 +68,9 @@ export default function JoyrideTooltipContainer(props: Readonly<TooltipRenderPro
       </div>
       {!hideFooter && (
         <div style={styles.tooltipFooter}>
-          <div style={styles.tooltipFooterSpacer}>{output.skip}</div>
           {output.back}
+          {showProgress && <div style={styles.tooltipFooterProgress}>{`${index + 1} / ${props.size}`}</div>}
+          {showSkipButton && <div style={styles.tooltipFooterSpacer}>{output.skip}</div>}
           {output.primary}
         </div>
       )}

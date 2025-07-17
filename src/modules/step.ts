@@ -1,15 +1,15 @@
-import { Props as FloaterProps } from 'react-floater';
-import { SetRequired } from '@gilbarbara/types';
+import {Props as FloaterProps} from 'react-floater';
+import {SetRequired} from '@gilbarbara/types';
 import deepmerge from 'deepmerge';
 import is from 'is-lite';
 
-import { defaultFloaterProps, defaultLocale, defaultStep } from '~/defaults';
+import {defaultFloaterProps, defaultLocale, defaultStep} from '~/defaults';
 import getStyles from '~/styles';
 
-import { Props, Step, StepMerged } from '~/types';
+import {Props, Step, StepMerged} from '~/types';
 
-import { getElement, hasCustomScrollParent } from './dom';
-import { log, omit, pick } from './helpers';
+import {getElement, hasCustomScrollParent} from './dom';
+import {log, omit, pick} from './helpers';
 
 function getTourProps(props: Props) {
   return pick(

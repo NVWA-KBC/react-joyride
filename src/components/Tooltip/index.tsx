@@ -1,8 +1,8 @@
-import { MouseEvent } from 'react';
+import {MouseEvent} from 'react';
 
-import { getReactNodeText, replaceLocaleContent } from '~/modules/helpers';
+import {getReactNodeText} from '~/modules/helpers';
 
-import { TooltipProps } from '~/types';
+import {TooltipProps} from '~/types';
 
 import Container from './Container';
 
@@ -40,7 +40,7 @@ export default function Tooltip(props: TooltipProps) {
   };
 
   const getElementsProps = () => {
-    const { back, close, last, next, nextLabelWithProgress, skip } = step.locale;
+    const { back, close, last, next, skip } = step.locale;
 
     const backText = getReactNodeText(back);
     const closeText = getReactNodeText(close);
@@ -54,16 +54,6 @@ export default function Tooltip(props: TooltipProps) {
     if (continuous) {
       primary = next;
       primaryText = nextText;
-
-      if (step.showProgress && !isLastStep) {
-        const labelWithProgress = getReactNodeText(nextLabelWithProgress, {
-          step: index + 1,
-          steps: size,
-        });
-
-        primary = replaceLocaleContent(nextLabelWithProgress, index + 1, size);
-        primaryText = labelWithProgress;
-      }
 
       if (isLastStep) {
         primary = last;

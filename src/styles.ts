@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge';
 
-import { hexToRGB } from './modules/helpers';
-import { Props, StepMerged, StylesOptions, StylesWithFloaterStyles } from './types';
+import {hexToRGB} from './modules/helpers';
+import {Props, StepMerged, StylesOptions, StylesWithFloaterStyles} from './types';
 
 const defaultOptions = {
   arrowColor: '#fff',
@@ -148,7 +148,6 @@ export default function getStyles(props: Props, step: StepMerged) {
     buttonBack: {
       ...buttonBase,
       color: options.primaryColor,
-      marginLeft: 'auto',
       marginRight: 5,
     },
     buttonClose: {
